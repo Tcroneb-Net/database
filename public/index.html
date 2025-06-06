@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Status Checker</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    #status { font-size: 2em; font-weight: bold; }
+    .live { color: green; }
+    .down { color: red; }
+  </style>
+</head>
+<body>
+  <h1>MongoDB Connection Status</h1>
+  <div id="status">Checking...</div>
+
+  <script>
+    async function checkStatus() {
+      try {
+        const res = await fetch('/status');
+        const data = await res.json();
+        const statusEl = document.getElementById('status');
+        if (data.live) {
+          statusEl.textContent = "✅ It's Live!";
+          statusEl.className = "live";
+        } else {
+          statusEl.textContent = "❌ Not Live";
+          statusEl.className = "down";
+        }
+      } catch (err) {
+        document.getElementById('status').textContent = "❌ Error connecting";
+        document.getElementById('status').className = "down";
+      }
+    }
+
+    checkStatus();
+    setInterval(checkStatus, 5000); // Auto-refresh every 5 seconds
+  </script>
+</body>
+</html>
