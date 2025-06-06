@@ -2,39 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Status Checker</title>
+  <title>PAID TECH ZONE</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-    #status { font-size: 2em; font-weight: bold; }
-    .live { color: green; }
+    body {
+      background-color: #0a0a0a;
+      color: #00ffcc;
+      font-family: 'Courier New', Courier, monospace;
+      text-align: center;
+      padding-top: 50px;
+    }
+    button {
+      padding: 10px 30px;
+      font-size: 1.2em;
+      background: #222;
+      border: 2px solid #00ffcc;
+      color: #00ffcc;
+      cursor: pointer;
+    }
+    #status {
+      font-size: 2em;
+      margin-top: 30px;
+    }
+    .live { color: lime; }
     .down { color: red; }
+    .scanning {
+      animation: blink 0.7s infinite alternate;
+    }
+    @keyframes blink {
+      from { opacity: 1; }
+      to { opacity: 0.2; }
+    }
   </style>
 </head>
 <body>
-  <h1>MongoDB Connection Status</h1>
-  <div id="status">Checking...</div>
+  <h1>TCRONEB HACKX DASHBOARD</h1>
+  <button onclick="startScan()">Start System Check</button>
+  <div id="status" class="scanning">System Idle</div>
+  <div id="tools" style="margin-top: 40px;">
+    <p><strong>Client IP:</strong> <span id="ip">Fetching...</span></p>
+    <p><strong>Network Latency:</strong> <span id="latency">N/A</span></p>
+  </div>
 
   <script>
-    async function checkStatus() {
+    async function getClientIP() {
       try {
-        const res = await fetch('/status');
+        const res = await fetch("https://api.ipify.org?format=json");
         const data = await res.json();
-        const statusEl = document.getElementById('status');
-        if (data.live) {
-          statusEl.textContent = "✅ It's Live!";
-          statusEl.className = "live";
-        } else {
-          statusEl.textContent = "❌ Not Live";
-          statusEl.className = "down";
-        }
-      } catch (err) {
-        document.getElementById('status').textContent = "❌ Error connecting";
-        document.getElementById('status').className = "down";
+        document.getElementById('ip').textContent = data.ip;
+      } catch {
+        document.getElementById('ip').textContent = "Unavailable";
       }
     }
 
-    checkStatus();
-    setInterval(checkStatus, 5000); // Auto-refresh every 5 seconds
+    async function pingServer() {
+      const start = Date.now();
+      try {
+        const res = await fetch('/status');
+        const data = await res.json();
+        const latency = Date.now() - start;
+        document.getElementById('latency').textContent = latency + "ms";
+
+        const statusDiv = document.getElementById('status');
+        if (data.live) {
+          statusDiv.textContent = "✅ MongoDB is LIVE";
+          statusDiv.className = "live";
+        } else {
+          statusDiv.textContent = "❌ MongoDB is DOWN";
+          statusDiv.className = "down";
+        }
+      } catch {
+        document.getElementById('status').textContent = "❌ Server Error";
+        document.getElementById('status').className = "down";
+        document.getElementById('latency').textContent = "N/A";
+      }
+    }
+
+    function startScan() {
+      const status = document.getElementById('status');
+      status.textContent = "🔄 Scanning...";
+      status.className = "scanning";
+
+      setTimeout(() => {
+        pingServer();
+      }, 2000);
+    }
+
+    // Run these once on page load
+    getClientIP();
   </script>
 </body>
 </html>
