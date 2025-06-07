@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 
 // ✅ MongoDB URI
-const uri = "mongodb+srv://tcronebtech2015:tcroneb2035@cluster0.jpm0fpx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = "mongodb+srv://tcronebtech2015:tcroneb2025@cluster0.jpm0fpx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // ✅ Connect to MongoDB
 mongoose.connect(uri)
